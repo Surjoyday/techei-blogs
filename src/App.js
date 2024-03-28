@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
+import useThemeToggler from "./useThemeToggler";
 
 function createRandomPost() {
   return {
@@ -16,8 +17,10 @@ function App() {
   const [posts, setPosts] = useState(() =>
     Array.from({ length: 30 }, () => createRandomPost())
   );
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [isFakeDark, setIsFakeDark] = useState(false);
+
+  const [isFakeDark, setIsFakeDark] = useThemeToggler();
 
   // Derived state : These are the posts that will actually be displayed
   const searchedPosts =
@@ -37,13 +40,6 @@ function App() {
     setPosts([]);
   }
 
-  useEffect(
-    function () {
-      document.documentElement.classList.toggle("fake-dark-mode");
-    },
-    [isFakeDark]
-  );
-
   return (
     // 2) PROVIDING VALUE TO CHILD COMPONENTS
     <PostContext.Provider
@@ -53,22 +49,30 @@ function App() {
         onClearPosts: handleClearPosts,
         searchQuery,
         setSearchQuery,
+        isFakeDark,
+        setIsFakeDark,
       }}
     >
       <section>
-        <button
-          onClick={() => setIsFakeDark((isFakeDark) => !isFakeDark)}
-          className="btn-fake-dark-mode"
-        >
-          {isFakeDark ? "☀️" : "🌙"}
-        </button>
-
         <Header />
+        <Button />
         <Main />
         <Archive />
         <Footer />
       </section>
     </PostContext.Provider>
+  );
+}
+
+function Button() {
+  const { setIsFakeDark, isFakeDark } = useContext(PostContext);
+  return (
+    <button
+      onClick={() => setIsFakeDark((isFakeDark) => !isFakeDark)}
+      className="btn-fake-dark-mode"
+    >
+      {isFakeDark ? "☀️" : "🌙"}
+    </button>
   );
 }
 
