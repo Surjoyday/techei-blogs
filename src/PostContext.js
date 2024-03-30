@@ -27,7 +27,6 @@ function PostProvider({ children }) {
     setPosts([]);
   }
 
-  // Custom Probider Component
   return (
     <PostContext.Provider
       value={{
